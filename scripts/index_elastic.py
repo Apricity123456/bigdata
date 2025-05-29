@@ -20,7 +20,7 @@ try:
     df = df.limit(200)
     pdf = df.toPandas()
 except Exception as e:
-    print("❌ Failed to read parquet or convert to Pandas:", e)
+    print(" Failed to read parquet or convert to Pandas:", e)
     spark.stop()
     exit(1)
 
@@ -32,7 +32,7 @@ try:
     if es.indices.exists(index=index_name):
         es.indices.delete(index=index_name)
 except Exception as e:
-    print("❌ Elasticsearch connection/index error:", e)
+    print(" Elasticsearch connection/index error:", e)
     spark.stop()
     exit(1)
 
@@ -46,8 +46,8 @@ try:
         for _, row in pdf.iterrows()
     ]
     bulk(es, actions)
-    print(f"✅ Indexed {len(actions)} documents to {index_name}")
+    print(f" Indexed {len(actions)} documents to {index_name}")
 except Exception as e:
-    print("❌ Bulk indexing failed:", e)
+    print(" Bulk indexing failed:", e)
 
 spark.stop()

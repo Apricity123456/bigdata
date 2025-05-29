@@ -34,6 +34,6 @@ df_ratings_clean = df_ratings_clean.withColumn("averageRating", col("averageRati
 df_basics_clean.write.mode("overwrite").parquet(output_basics)
 df_ratings_clean.write.mode("overwrite").parquet(output_ratings)
 
-print("✅ IMDB data formatted and saved to Parquet.")
+print(" IMDB data formatted and saved to Parquet.")
 
 spark.stop()

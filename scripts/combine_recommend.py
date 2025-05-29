@@ -48,5 +48,5 @@ df_final = df_result.select(
 # 写入 Parquet
 df_final.write.mode("overwrite").parquet(output_path)
 
-print("✅ Recommendation completed and saved to:", output_path)
+print(" Recommendation completed and saved to:", output_path)
 spark.stop()

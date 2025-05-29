@@ -24,7 +24,7 @@ def download_and_extract(url, out_path):
             shutil.copyfileobj(f_in, f_out)
 
     os.remove(gz_path)
-    print(f"✅ Extracted to: {out_path}")
+    print(f" Extracted to: {out_path}")
 
 if __name__ == "__main__":
     os.makedirs(RAW_DIR, exist_ok=True)

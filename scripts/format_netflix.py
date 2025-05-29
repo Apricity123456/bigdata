@@ -27,6 +27,6 @@ df_clean = df_clean.withColumn("release_year", col("release_year").cast("int")) 
 # 保存为 Parquet
 df_clean.write.mode("overwrite").parquet(output_path)
 
-print("✅ Netflix data formatted and saved to Parquet.")
+print(" Netflix data formatted and saved to Parquet.")
 
 spark.stop()
