@@ -146,7 +146,8 @@ airflow dags trigger dual_recommend_pipeline
 * `project.zip`: Source code archive
 
 
-#  Big Data Recommendation Project - IMDb & Netflix
+
+#  Big Data Recommendation Project - IMDb & Netflix (CHINESE VERSION)
 
 ##  项目概要
 
