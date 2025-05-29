@@ -6,40 +6,6 @@ This project implements a complete end-to-end data pipeline using Big Data techn
 
 The domain is focused on movies, with cross-source analysis of IMDb and Netflix data to generate valuable movie recommendations.
 
----
-##  Airflow Start Script (airflow\_start.sh)
-
-```bash
-#!/bin/bash
-
-# Set AIRFLOW_HOME directory
-export AIRFLOW_HOME=~/airflow
-
-# Initialize the metadata database
-airflow db init
-
-# Create default admin user (only needed on first run)
-airflow users create \
-  --username admin \
-  --firstname admin \
-  --lastname user \
-  --role Admin \
-  --email admin@example.com \
-  --password admin
-
-# Start the scheduler in background
-airflow scheduler &
-
-# Start the web server on port 8080
-airflow webserver --port 8080
-```
-
-* Web UI access: [http://localhost:8080](http://localhost:8080)
-* Default credentials: `admin` / `admin`
-* Reset DB if needed: `airflow db reset -y`
-
----
-
 ##  Data Pipeline Structure
 
 ### 1. Data Ingestion
@@ -190,39 +156,6 @@ bash airflow_start.sh
 
 该项目以影视为主题，选取 IMDB 和 Netflix 两类影视数据源，展示如何通过跨源分析和机器学习算法实现实际价值的推荐系统。
 
----
-##  Airflow 启动脚本 airflow\_start.sh（说明）
-
-```bash
-#!/bin/bash
-
-# 设置 AIRFLOW_HOME 目录
-export AIRFLOW_HOME=~/airflow
-
-# 初始化数据库（只需执行一次）
-airflow db init
-
-# 创建默认管理员账户（首次运行需要）
-airflow users create \
-  --username admin \
-  --firstname admin \
-  --lastname user \
-  --role Admin \
-  --email admin@example.com \
-  --password admin
-
-# 后台运行调度器
-airflow scheduler &
-
-# 启动 Web UI，监听 8080 端口
-airflow webserver --port 8080
-```
-
-* 默认登录地址: [http://localhost:8080](http://localhost:8080)
-* 用户名/密码：`admin` / `admin`
-* 若需重置数据库：`airflow db reset -y`
-
----
 ##  数据流程模型
 
 ### 1. 数据采集 (Ingestion)
