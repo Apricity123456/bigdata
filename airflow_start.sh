@@ -1,16 +1,29 @@
 #!/bin/bash
 
-echo " Starting Airflow services..."
+# 设置 AIRFLOW_HOME 路径（可根据实际路径修改）
+export AIRFLOW_HOME=~/airflow
 
-# Activate the virtual environment
-source airflow_env/bin/activate
+# 创建并激活虚拟环境（如果需要）
+# python3 -m venv venv
+# source venv/bin/activate
 
-# Start scheduler in background
-echo " Starting Airflow Scheduler..."
-airflow scheduler > scheduler.log 2>&1 &
+# 安装依赖（确保 requirements.txt 存在）
+# pip install -r requirements.txt
 
-# Start webserver in background on port 8080
-echo " Starting Airflow Webserver on http://localhost:8080 ..."
-airflow webserver --port 8080 > webserver.log 2>&1 &
+# 初始化数据库
+airflow db init
 
-echo " Airflow is starting. Check scheduler.log and webserver.log for logs."
+# 创建默认用户（只首次执行需要）
+airflow users create \
+    --username admin \
+    --firstname admin \
+    --lastname user \
+    --role Admin \
+    --email admin@example.com \
+    --password admin
+
+# 启动调度器（后台运行）
+airflow scheduler &
+
+# 启动 Web UI（默认端口 8080）
+airflow webserver --port 8080
