@@ -1,7 +1,13 @@
 from pyspark.sql import SparkSession
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
-import json
+import pandas as pd
+import os
+
+# 构造路径
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+input_path = os.path.join(BASE_DIR, "../data/combined/recommended_movies.parquet")
+index_name = "movies_recommendation"
 
 # 初始化 Spark
 spark = SparkSession.builder \
@@ -9,33 +15,39 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # 读取推荐结果
-df = spark.read.parquet("data/combined/recommended_movies.parquet")
-df = df.limit(200)  # 限制数量防止爆掉 Elasticsearch
+try:
+    df = spark.read.parquet(input_path)
+    df = df.limit(200)
+    pdf = df.toPandas()
+except Exception as e:
+    print("❌ Failed to read parquet or convert to Pandas:", e)
+    spark.stop()
+    exit(1)
 
-# 转为 Pandas，便于批量上传
-pdf = df.toPandas()
+# 初始化 Elasticsearch
+try:
+    es = Elasticsearch("http://localhost:9200")
 
-# 初始化 Elasticsearch 客户端
-es = Elasticsearch("http://localhost:9200")
+    # 删除旧索引
+    if es.indices.exists(index=index_name):
+        es.indices.delete(index=index_name)
+except Exception as e:
+    print("❌ Elasticsearch connection/index error:", e)
+    spark.stop()
+    exit(1)
 
-# 定义索引名称
-index_name = "movies_recommendation"
+# 转换成 bulk actions
+try:
+    actions = [
+        {
+            "_index": index_name,
+            "_source": row.dropna().to_dict()
+        }
+        for _, row in pdf.iterrows()
+    ]
+    bulk(es, actions)
+    print(f"✅ Indexed {len(actions)} documents to {index_name}")
+except Exception as e:
+    print("❌ Bulk indexing failed:", e)
 
-# 删除旧索引（如果已存在）
-if es.indices.exists(index=index_name):
-    es.indices.delete(index=index_name)
-
-# 准备数据
-actions = [
-    {
-        "_index": index_name,
-        "_source": row.dropna().to_dict()
-    }
-    for _, row in pdf.iterrows()
-]
-
-# 批量写入
-bulk(es, actions)
-
-print(f"✅ Indexed {len(actions)} documents to {index_name}")
 spark.stop()

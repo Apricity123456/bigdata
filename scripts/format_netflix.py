@@ -1,23 +1,26 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, to_date
+import os
 
+# 动态构造路径，确保在 Airflow 中不出错
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+input_path = os.path.join(BASE_DIR, "../data/raw/netflix/netflix_titles.csv")
+output_path = os.path.join(BASE_DIR, "../data/formatted/netflix/titles.parquet")
+
+# 启动 Spark
 spark = SparkSession.builder \
     .appName("Format Netflix Data") \
     .getOrCreate()
 
-# 输入输出路径
-input_path = "data/raw/netflix/netflix_titles.csv"
-output_path = "data/formatted/netflix/titles.parquet"
-
 # 读取 CSV
 df = spark.read.csv(input_path, header=True)
 
-# 清洗字段：选出有用字段，去除空值
+# 清洗字段
 df_clean = df.select(
     "show_id", "title", "type", "release_year", "date_added", "rating", "duration", "listed_in"
 ).dropna(subset=["title", "release_year"])
 
-# 格式化日期字段（加分项）
+# 转换字段类型
 df_clean = df_clean.withColumn("release_year", col("release_year").cast("int")) \
                    .withColumn("date_added", to_date(col("date_added"), "MMMM d, yyyy"))
 
