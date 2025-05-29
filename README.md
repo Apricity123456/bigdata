@@ -156,6 +156,9 @@ airflow standalone
 
 # Manually trigger DAG
 airflow dags trigger dual_recommend_pipeline
+
+#Use airflow_start.sh to Start Airflow
+bash airflow_start.sh
 ```
 
 ---
@@ -336,6 +339,9 @@ airflow standalone
 
 # 手动执行 DAG
 airflow dags trigger dual_recommend_pipeline
+
+#使用 airflow_start.sh 启动 Start Airflow
+bash airflow_start.sh
 ```
 
 ---
