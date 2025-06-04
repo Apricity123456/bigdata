@@ -39,7 +39,6 @@ model = als.fit(df_indexed)
 # recommendations = model.recommendForAllUsers(10)
 recommendations = model.recommendForAllUsers(random.randint(5, 15))
 
-# 保存结果
 recommendations.write.mode("overwrite").parquet(output_path)
 print(f" ALS 推荐完成并已保存到 {output_path}")
 

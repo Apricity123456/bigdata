@@ -1,9 +1,8 @@
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from datetime import datetime, timedelta
-import os
+from dag_utils import script_cmd
 
-# 默认参数
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -12,7 +11,7 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-# 定义 DAG
+
 dag = DAG(
     'dual_recommend_pipeline',
     default_args=default_args,
@@ -21,12 +20,6 @@ dag = DAG(
     catchup=False,
 )
 
-# 脚本路径函数（统一路径管理）
-scripts_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
-def script_cmd(script_name):
-    return f'python3 {os.path.join(scripts_dir, script_name)}'
-
-# === 任务定义 ===
 ingest_imdb = BashOperator(
     task_id='ingest_imdb',
     bash_command=script_cmd('ingest_imdb_api.py'),
@@ -75,7 +68,6 @@ index_elastic = BashOperator(
     dag=dag,
 )
 
-# === 依赖关系设置 ===
 ingest_imdb >> format_imdb
 ingest_netflix >> format_netflix
 
